@@ -1,7 +1,23 @@
-const config = require('../config/env.config.json');
-const User = require('./models/user');
-const Product = require('./models/product');
+require('babel-register');
+const path = require('path');
+const root = path.join(__dirname, '../');
+// first homework
 
-console.log('name', config.name);
-const user = new User();
-const product = new Product();
+// const config = require('../config/env.config.json');
+// const User = require('./models/user');
+// const Product = require('./models/product');
+//
+// console.log('name', config.name);
+// new User();
+// new Product();
+
+// second homework
+
+const searchFolder = path.join(root, './data');
+const Dirwatcher = require('./models/dirwatcher').default;
+const Importer = require('./models/importer');
+new Importer(searchFolder);
+
+const watcher = new Dirwatcher();
+
+watcher.watch(searchFolder);
