@@ -1,0 +1,32 @@
+{
+  "name": "nodePlayingAround",
+  "version": "1.0.0",
+  "description": "Studing nodeJs",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Kuzmenkoar/nodePlayingAround.git"
+  },
+  "author": "Kuzmenkoar",
+  "license": "ISC",
+  "scripts": {
+    "start": "nodemon --watch src ./src/index.js",
+    "precommit": "lint-staged",
+    "format": "prettier --write **/*.js"
+  },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "dependencies": {
+    "express": "^4.16.3"
+  },
+  "devDependencies": {
+    "husky": "^0.14.3",
+    "lint-staged": "^7.2.0",
+    "nodemon": "^1.18.0",
+    "prettier": "^1.13.7"
+  }
+}
