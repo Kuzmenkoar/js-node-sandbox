@@ -1,0 +1,7 @@
+div.deep-child {
+    border: none;
+}
+
+div.deep-second-child {
+    display: none;
+}

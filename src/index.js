@@ -13,11 +13,17 @@ const root = path.join(__dirname, '../');
 
 // second homework
 
-const searchFolder = path.join(root, './data');
-const Dirwatcher = require('./models/dirwatcher').default;
-const Importer = require('./models/importer');
-new Importer(searchFolder);
+// const searchFolder = path.join(root, './data');
+// const Dirwatcher = require('./models/dirwatcher').default;
+// const Importer = require('./models/importer');
+// new Importer(searchFolder);
+//
+// const watcher = new Dirwatcher();
+//
+// watcher.watch(searchFolder);
 
-const watcher = new Dirwatcher();
+// third lesson
 
-watcher.watch(searchFolder);
+const Streams = require('./utils/streams');
+
+new Streams();
