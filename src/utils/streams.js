@@ -1,13 +1,13 @@
 const argv = require('yargs').argv;
 const path = require('path');
 const fs = require('fs');
-const through2 = require('through2');
+const through = require('through2');
 
 const ROOT = path.join(__dirname, '../../');
 
 class Streams {
   constructor() {
-    const { action, file } = argv;
+    const { action, file, folder } = argv;
 
     if (!action) {
       throw 'pass action parameter';
@@ -15,13 +15,12 @@ class Streams {
       throw 'Action not found';
     }
 
-    this[action](file);
+    this[action](file || folder);
   }
 
   readStream(file) {
     if (!file) {
-      console.log('There is no file to readStream');
-      return;
+      throw 'There is no file to readStream';
     }
 
     const chosenFile = path.join(ROOT, file);
@@ -32,12 +31,89 @@ class Streams {
   convertToUpperCase() {
     process.stdin
       .pipe(
-        through2(function(chunk, enc, next) {
+        through(function(chunk, enc, next) {
           this.push(chunk.toString().toUpperCase());
           next();
         }),
       )
       .pipe(process.stdout);
+  }
+
+  // ADD write flag for this action to write file down
+  convertCsvToJson(file) {
+    if (!file) {
+      throw 'There is no file to readStream';
+    }
+    const chosenFile = path.join(ROOT, file);
+
+    fs.createReadStream(chosenFile)
+      .pipe(
+        through(function(chunk, enc, next) {
+          const chunkString = chunk.toString().split('\n');
+          const keys = chunkString
+            .splice(0, 1)[0]
+            .trim()
+            .split(',');
+
+          const result = chunkString.reduce((total, item) => {
+            if (!item.length) {
+              return total;
+            }
+            const obj = {};
+            let keyIndex = 0;
+
+            item
+              .trim()
+              .split('"')
+              .forEach((string, index) => {
+                if (index % 2 === 0) {
+                  string.split(',').forEach(el => {
+                    if (!el.length) {
+                      return;
+                    }
+                    obj[keys[keyIndex]] = el.trim();
+                    keyIndex++;
+                  });
+                } else {
+                  if (!string.length) {
+                    return;
+                  }
+                  obj[keys[keyIndex]] = string.trim();
+                  keyIndex++;
+                }
+              });
+
+            return total.concat([obj]);
+          }, []);
+
+          this.push(JSON.stringify(result));
+
+          next();
+        }),
+      )
+      .pipe(
+        argv.write ? fs.createWriteStream(chosenFile.replace('.csv', '.json')) : process.stdout,
+      );
+  }
+
+  cssBuilder(folder) {
+    if (!folder) {
+      throw 'There is no path to readStream';
+    }
+
+    // const chosenPath = path.join(ROOT, folder);
+    //
+    // fs.readdir(chosenPath)
+    //   .then(files => console.log(files))
+    //   .catch(er => console.error(er))
+
+    // fs.createReadStream(chosenPath)
+    //   .pipe(through(function(chunk, enc, next) {
+    //     this.push(chunk);
+    //
+    //     next()
+    //   }))
+    //   .pipe(process.stdout)
   }
 }
 
