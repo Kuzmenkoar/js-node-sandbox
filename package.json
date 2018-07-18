@@ -10,7 +10,7 @@
   "author": "Kuzmenkoar",
   "license": "ISC",
   "scripts": {
-    "start": "nodemon --watch src ./src/index.js",
+    "start": "nodemon --exec babel-node --watch src ./src/index.js",
     "node": "node ./src/index.js",
     "precommit": "lint-staged",
     "format": "prettier --write **/*.js"

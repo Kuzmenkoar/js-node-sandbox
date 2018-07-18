@@ -1,9 +1,16 @@
+import readDirStream from './readDirStream';
+
 const argv = require('yargs').argv;
 const path = require('path');
 const fs = require('fs');
+const util = require('util');
 const through = require('through2');
 
 const ROOT = path.join(__dirname, '../../');
+
+const readDir = util.promisify(fs.readdir);
+
+const findOnlyCss = array => (array ? array.filter(el => el.slice(-4) === '.css') : []);
 
 class Streams {
   constructor() {
@@ -96,27 +103,74 @@ class Streams {
       );
   }
 
+  async getCssFilesInsideRepository(folder) {
+    let files;
+    try {
+      files = await readDir(folder);
+    } catch (e) {
+      console.log(e);
+    }
+
+    const fileCss = findOnlyCss(files);
+    let childrenCss = [];
+
+    files.filter(el => el.slice(-4) !== '.css').forEach(async el => {
+      const nextPath = path.join(folder, el);
+      const childrenFiles = await this.getCssFilesInsideRepository(nextPath);
+      childrenCss = findOnlyCss(childrenFiles);
+    });
+
+    console.log('test', childrenCss);
+
+    return fileCss.concat(childrenCss);
+  }
+
+  // async cssBuilder(folder) {
+  //   if (!folder) {
+  //     throw 'There is no path to readStream';
+  //   }
+  //
+  //   const chosenPath = path.join(ROOT, folder);
+  //   const files = await this.getCssFilesInsideRepository(chosenPath);
+  //
+  //   console.log('result', files)
+  // }
+
   cssBuilder(folder) {
     if (!folder) {
       throw 'There is no path to readStream';
     }
 
-    // const chosenPath = path.join(ROOT, folder);
-    //
-    // fs.readdir(chosenPath)
-    //   .then(files => console.log(files))
-    //   .catch(er => console.error(er))
+    const chosenPath = path.join(ROOT, folder);
+    const files = this.getCssFilesInsideRepository(chosenPath);
 
-    // fs.createReadStream(chosenPath)
-    //   .pipe(through(function(chunk, enc, next) {
-    //     this.push(chunk);
-    //
-    //     next()
-    //   }))
-    //   .pipe(process.stdout)
+    console.log('result', files);
   }
+
+  // async cssBuilder(folder) {
+  //   if (!folder) {
+  //     throw 'There is no path to readStream';
+  //   }
+  //
+  //   const chosenPath = path.join(ROOT, folder);
+  //
+  //
+  //   console.log(files)
+  //
+  //   // fs.readdir(chosenPath)
+  //   //   .then(files => console.log(files))
+  //   //   .catch(er => console.error(er))
+  //
+  //   // fs.createReadStream(chosenPath)
+  //   //   .pipe(through(function(chunk, enc, next) {
+  //   //     this.push(chunk);
+  //   //
+  //   //     next()
+  //   //   }))
+  //   //   .pipe(process.stdout)
+  // }
 }
 
-module.exports = Streams;
+export default Streams;
 
 console.log(argv);

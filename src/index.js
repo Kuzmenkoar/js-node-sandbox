@@ -1,6 +1,8 @@
-require('babel-register');
-const path = require('path');
+import path from 'path';
+import Streams from './utils/streams';
+
 const root = path.join(__dirname, '../');
+
 // first homework
 
 // const config = require('../config/env.config.json');
@@ -23,7 +25,5 @@ const root = path.join(__dirname, '../');
 // watcher.watch(searchFolder);
 
 // third lesson
-
-const Streams = require('./utils/streams');
 
 new Streams();
