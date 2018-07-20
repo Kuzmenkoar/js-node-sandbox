@@ -11,6 +11,7 @@
   "license": "ISC",
   "scripts": {
     "start": "nodemon --exec babel-node --watch src ./src/index.js",
+    "3homework": "nodemon --exec babel-node --watch src ./src/index.js --action=cssBuilder --folder=./data/css --homework=thirdHomework",
     "node": "node ./src/index.js",
     "precommit": "lint-staged",
     "format": "prettier --write **/*.js"

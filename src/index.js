@@ -1,29 +1,51 @@
 import path from 'path';
+import { argv } from 'yargs';
+
+//first
+import config from '../config/env.config.json';
+import User from './models/user';
+import Product from './models/product';
+//second
+import Dirwatcher from './models/dirwatcher';
+import Importer from './models/importer';
+//third
 import Streams from './utils/streams';
 
 const root = path.join(__dirname, '../');
 
-// first homework
+class Homeworks {
+  constructor() {
+    const { homework } = argv;
 
-// const config = require('../config/env.config.json');
-// const User = require('./models/user');
-// const Product = require('./models/product');
-//
-// console.log('name', config.name);
-// new User();
-// new Product();
+    if (!homework) {
+      throw 'pass homework parameter';
+    } else if (!this[homework]) {
+      throw 'Action not found';
+    }
 
-// second homework
+    this[homework]();
+  }
 
-// const searchFolder = path.join(root, './data');
-// const Dirwatcher = require('./models/dirwatcher').default;
-// const Importer = require('./models/importer');
-// new Importer(searchFolder);
-//
-// const watcher = new Dirwatcher();
-//
-// watcher.watch(searchFolder);
+  firstHomework() {
+    console.log('name', config.name);
+    new User();
+    new Product();
+  }
 
-// third lesson
+  secondHomework() {
+    const searchFolder = path.join(root, './data');
 
-new Streams();
+    new Importer(searchFolder);
+
+    const watcher = new Dirwatcher();
+
+    watcher.watch(searchFolder);
+  }
+
+  thirdHomework() {
+    new Streams();
+  }
+}
+
+console.log(argv);
+new Homeworks();
