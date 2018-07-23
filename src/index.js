@@ -10,6 +10,11 @@ import Dirwatcher from './models/dirwatcher';
 import Importer from './models/importer';
 //third
 import Streams from './utils/streams';
+//fourth
+import htmlHttpServer from './http-servers/html-server';
+import jsonHttpServer from './http-servers/json-server';
+import plainHttpServer from './http-servers/plain-text-server';
+import runServer from './server/index';
 
 const root = path.join(__dirname, '../');
 
@@ -44,6 +49,20 @@ class Homeworks {
 
   thirdHomework() {
     new Streams();
+  }
+
+  fourthHomework() {
+    const { httpServer } = argv;
+    if (httpServer) {
+      const httpServers = {
+        htmlHttpServer,
+        plainHttpServer,
+        jsonHttpServer,
+      };
+      httpServers[`${httpServer}HttpServer`]();
+    } else {
+      runServer();
+    }
   }
 }
 
